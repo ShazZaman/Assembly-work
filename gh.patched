@@ -1,0 +1,20 @@
+#!/usr/bin/env python2
+
+import sys
+from pwn import *
+
+e = ELF('gh')
+
+addrvals = {
+  0x08048ee1: 0x5047537b7335,
+  0x080490ee: 0x4211561d4211,
+  0x080492fc: 0x647968683461,
+  0x080494ff: 0x34385135797d
+}
+for addr, value in addrvals.iteritems():
+  print "0x%08x" % (addr)
+  e.write(addr, asm("mov DWORD PTR [esp+0x50], %s" % (value), arch="x86"))
+  print disasm(e.read(addr-0xf, 64))
+  print
+
+e.save('bin100.patched')
